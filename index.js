@@ -22,11 +22,19 @@ async function run() {
   try {
     const productCollection = client.db("recycle-me").collection("products");
 
+    const bookingsCollection = client.db("recycle-me").collection("bookings");
+
     app.get("/products", async (req, res) => {
       const query = {};
       const cursor = productCollection.find(query);
       const products = await cursor.toArray();
       res.send(products);
+    });
+    app.post("/bookings", async (req, res) => {
+      const booking = req.body;
+      console.log(booking);
+      const result = await bookingsCollection.insertOne(booking);
+      res.send(result);
     });
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
