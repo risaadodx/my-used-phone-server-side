@@ -24,23 +24,40 @@ async function run() {
 
     const bookingsCollection = client.db("recycle-me").collection("bookings");
 
+    const usersCollection = client.db("recycle-me").collection("users");
+
     app.get("/products", async (req, res) => {
       const query = {};
       const cursor = productCollection.find(query);
       const products = await cursor.toArray();
       res.send(products);
     });
-    app.post("/bookings", async (req, res) => {
-      const booking = req.body;
-      console.log(booking);
-      const result = await bookingsCollection.insertOne(booking);
-      res.send(result);
-    });
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const product = await productCollection.findOne(query);
       res.send(product);
+    });
+
+    //bookings api//
+    app.post("/bookings", async (req, res) => {
+      const bookingSubmit = req.body;
+      console.log(bookingSubmit);
+      const result = await bookingsCollection.insertOne(bookingSubmit);
+      res.send(result);
+    });
+    app.get("/bookings", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const bookings = await bookingsCollection.find(query).toArray();
+      res.send(bookings);
+    });
+
+    //users api//
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
     });
   } finally {
   }
