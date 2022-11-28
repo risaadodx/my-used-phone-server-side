@@ -115,11 +115,21 @@ async function run() {
       res.send({ isAdmin: user?.role === "admin" });
     });
     //seller api
+    app.get("/users/buyer", async (req, res) => {
+      const query = { role: "buyer" };
+      const user = await usersCollection.find(query).toArray();
+      res.send(user);
+    });
+    app.get("/users/seller", async (req, res) => {
+      const query = { role: "seller" };
+      const user = await usersCollection.find(query).toArray();
+      res.send(user);
+    });
     app.get("/users/seller/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email };
       const user = await usersCollection.findOne(query);
-      res.send({ isSeller: user?.accountType === "seller" });
+      res.send({ isSeller: user?.role === "seller" });
     });
 
     app.post("/users", async (req, res) => {
