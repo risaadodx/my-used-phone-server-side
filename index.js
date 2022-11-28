@@ -114,12 +114,20 @@ async function run() {
       const user = await usersCollection.findOne(query);
       res.send({ isAdmin: user?.role === "admin" });
     });
-    //seller api
+    //buyer api
     app.get("/users/buyer", async (req, res) => {
       const query = { role: "buyer" };
       const user = await usersCollection.find(query).toArray();
       res.send(user);
     });
+    app.get("/users/buyer/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isBuyer: user?.role === "buyer" });
+    });
+    //seller api
+
     app.get("/users/seller", async (req, res) => {
       const query = { role: "seller" };
       const user = await usersCollection.find(query).toArray();
@@ -135,6 +143,13 @@ async function run() {
     app.post("/users", async (req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
+
+    app.delete("/users/:email", verifyJWT, verifyAdmin, async (req, res) => {
+      const email = req.params.email;
+      const filter = { email };
+      const result = await usersCollection.deleteOne(filter);
       res.send(result);
     });
 
